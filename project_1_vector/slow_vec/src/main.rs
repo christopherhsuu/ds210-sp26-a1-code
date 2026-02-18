@@ -87,3 +87,5 @@ fn main() {
     slow_vec_push();
     slow_vec_remove();
 }
+
+// test merge
