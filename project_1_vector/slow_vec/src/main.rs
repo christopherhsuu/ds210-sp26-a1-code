@@ -95,7 +95,7 @@ fn main() {
     fixed_sized_array();
 
     // These parts do not work unless you implement push and remove correctly.
-    //slow_vec_push();
+    slow_vec_push();
     slow_vec_remove();
 }
 
