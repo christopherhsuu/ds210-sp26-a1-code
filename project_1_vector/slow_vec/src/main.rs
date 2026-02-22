@@ -14,7 +14,7 @@ fn fixed_sized_array() {
     println!("{array}");  // You can print a FixedSizeArray directly!
 
 
-    print!("{}", array.move_out(0));
+    //print!("{}", array.move_out(0));
     // We can call get many times.
     println!("{}", array.get(0));
     println!("{}", array.get(0));
@@ -27,7 +27,7 @@ fn fixed_sized_array() {
     //println!("{}", array.move_out(0));
     //println!("{}", array.move_out(0));
 
-    print!("{array}"); 
+    println!("{array}"); 
 
     // Try other things!
     // What happens if you try to put or get things out of the range?
@@ -95,7 +95,7 @@ fn main() {
     fixed_sized_array();
 
     // These parts do not work unless you implement push and remove correctly.
-    slow_vec_push();
+    //slow_vec_push();
     slow_vec_remove();
 }
 

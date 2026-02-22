@@ -65,7 +65,19 @@ impl<T> SlowVec<T> {
 
     // Student 2: Provide your solution here
     pub fn remove(&mut self, i: usize) {
-        todo!("Student 2 should implement this");
+        let mut tmp = FixedSizeArray::allocate(self.len()-1);
+        let mut index = 0;
+        for x in 0..self.len(){
+            if x ==i{
+                self.fixed.move_out(x);
+            }else{
+                let val = self.fixed.move_out(x);
+                tmp.put(val, index);
+                index +=1;
+            }
+        }
+
+        self.fixed = tmp;
     }
 }
 
