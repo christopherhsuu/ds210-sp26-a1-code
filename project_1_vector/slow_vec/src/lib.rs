@@ -86,6 +86,7 @@ impl<T> SlowVec<T> {
         }
 
         self.fixed = tmp;
+
     }
 }
 
