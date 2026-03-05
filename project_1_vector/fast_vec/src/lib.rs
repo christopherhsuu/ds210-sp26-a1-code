@@ -1,4 +1,4 @@
-use std::{fmt::{Display, Formatter}, ptr::{self, null_mut}};
+use std::{fmt::{Display, Formatter}, panic, ptr::{self, null_mut}};
 
 use malloc::MALLOC;
 
@@ -82,7 +82,17 @@ impl<T> FastVec<T> {
 
     // Student 1 should implement this.
     pub fn remove(&mut self, i: usize) {
-        todo!("implement remove");
+        if i >= self.len {
+            panic!("FastVec: remove out of bounds");
+        }
+        unsafe {
+            let _removed = ptr::read(self.ptr_to_data.add(i));
+            for j in (i + 1)..self.len {
+                let val = ptr::read(self.ptr_to_data.add(j));
+                ptr::write(self.ptr_to_data.add(j - 1), val);
+            }
+        }
+        self.len = self.len - 1;
     }
 
     // This appears correct but with further testing, you will notice it has a bug!
