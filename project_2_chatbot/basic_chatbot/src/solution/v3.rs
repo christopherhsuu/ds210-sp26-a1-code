@@ -44,6 +44,7 @@ impl ChatbotV3 {
         // you may want to use https://docs.rs/kalosm/0.4.0/kalosm/language/struct.Chat.html#method.session
         // to then retrieve the history!
         if let Some(chat) = self.sessions.get(username) {
+        if let Some(chat) = self.sessions.get(&username) {
         chat.session()
             .expect("failed to get chat session")
             .history()
