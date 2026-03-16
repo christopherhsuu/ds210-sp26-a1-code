@@ -45,18 +45,15 @@ impl ChatbotV3 {
         // to then retrieve the history!
         if let Some(chat) = self.sessions.get(&username) {
         if let Ok(session) = chat.session() {
-            // Get the history and map each message to a String
             session
                 .history()
                 .into_iter()
                 .map(|msg| msg.content().to_string())
                 .collect()
         } else {
-            // If session() returned Err, return empty history
             Vec::new()
         }
     } else {
-        // If username not found, return empty history
         Vec::new()
     }
 }
