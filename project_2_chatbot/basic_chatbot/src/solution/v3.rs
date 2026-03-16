@@ -32,9 +32,8 @@ impl ChatbotV3 {
             self.sessions.insert(username.clone(), chat_session);
         }
         let session = self.sessions.get_mut(&username).unwrap();
-        let mut response_stream = session.add_message(message);
-        response_stream.to_std_out().await.unwrap();
-        response_stream.all_text().await
+        let response = session.add_message(message).await.unwrap();        
+        return response.to_string();
     }
 
     #[allow(dead_code)]
