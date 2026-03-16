@@ -44,9 +44,13 @@ impl ChatbotV3 {
         // you may want to use https://docs.rs/kalosm/0.4.0/kalosm/language/struct.Chat.html#method.session
         // to then retrieve the history!
         if let Some(chat) = self.sessions.get(&username) {
-        return chat.session().iter().map(|entry| entry.content.clone()).collect();
-}       else {
-        return Vec::new();
-}
+        chat.session()
+            .history() 
+            .into_iter()
+            .map(|msg| msg.content().to_string())
+            .collect()
+    } else {
+        Vec::new()
+    }
     }
 }
