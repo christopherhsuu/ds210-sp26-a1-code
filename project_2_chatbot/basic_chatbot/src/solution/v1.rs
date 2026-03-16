@@ -22,10 +22,6 @@ impl ChatbotV1 {
         // consider https://docs.rs/kalosm/0.4.0/kalosm/language/struct.Chat.html#method.add_message
         // Hint: make sure you transform/extract the response message as a **String**.
         let response = chat_session.add_message(message).await.unwrap();
-<<<<<<< s1basic
         response.to_string()        
-=======
-        response.to_string()
->>>>>>> s2basic
     }
 }

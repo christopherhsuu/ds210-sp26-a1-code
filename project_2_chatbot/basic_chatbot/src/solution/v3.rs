@@ -18,7 +18,7 @@ impl ChatbotV3 {
     pub fn new(model: Llama) -> ChatbotV3 {
         return ChatbotV3 {
             // Make sure you initialize your struct members here
-            model;
+            model,
             sessions: HashMap::new(),
         };
     }
@@ -34,7 +34,7 @@ impl ChatbotV3 {
         let session = self.sessions.get_mut(&username).unwrap();
         let mut response_stream = session.add_message(message);
         response_stream.to_std_out().await.unwrap();
-        response_stream.all_text().await;
+        response_stream.all_text().await
     }
 
     #[allow(dead_code)]
@@ -43,11 +43,10 @@ impl ChatbotV3 {
         // Hint: think of how you can retrieve the Chat object for that user, when you retrieve it
         // you may want to use https://docs.rs/kalosm/0.4.0/kalosm/language/struct.Chat.html#method.session
         // to then retrieve the history!
-        return Vec::new();
         if let Some(chat) = self.sessions.get(&username) {
-            chat.session().iter().map(|entry| entry.content.clone()).collect()
-        } else {
-            return Vec::new(); 
-        }
+        return chat.session().iter().map(|entry| entry.content.clone()).collect();
+}       else {
+        return Vec::new();
+}
     }
 }
