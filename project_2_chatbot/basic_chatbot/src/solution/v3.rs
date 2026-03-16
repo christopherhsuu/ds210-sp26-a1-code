@@ -1,4 +1,5 @@
 use kalosm::language::*;
+use std::collections::HashMap;
 
 #[allow(dead_code)]
 pub struct ChatbotV3 {
@@ -8,6 +9,8 @@ pub struct ChatbotV3 {
     // together!
     // Need to store one chat session per user.
     // Think of some kind of data structure that can help you with this.
+    model: Llama,
+    sessions: HashMap<String, Chat<Llama>>,
 }
 
 impl ChatbotV3 {
@@ -15,16 +18,23 @@ impl ChatbotV3 {
     pub fn new(model: Llama) -> ChatbotV3 {
         return ChatbotV3 {
             // Make sure you initialize your struct members here
+            model;
+            sessions: HashMap::new(),
         };
     }
 
     #[allow(dead_code)]
     pub async fn chat_with_user(&mut self, username: String, message: String) -> String {
-        // Add your code for chatting with the agent while keeping conversation history here.
-        // Notice, you are given both the `message` and also the `username`.
-        // Use this information to select the correct chat session for that user and keep it
-        // separated from the sessions of other users.
-        return String::from("Hello, I am not a bot (yet)!");
+        if !self.sessions.contains_key(&username) {
+            let chat_session = self.model
+                .chat()
+                .with_system_prompt("The assistant will act like a pirate");
+            self.sessions.insert(username.clone(), chat_session);
+        }
+        let session = self.sessions.get_mut(&username).unwrap();
+        let mut response_stream = session.add_message(message);
+        response_stream.to_std_out().await.unwrap();
+        response_stream.all_text().await;
     }
 
     #[allow(dead_code)]
