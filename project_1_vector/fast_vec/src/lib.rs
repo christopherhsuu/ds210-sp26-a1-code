@@ -1,4 +1,4 @@
-use std::{fmt::{Display, Formatter}, ptr::{self, null_mut}};
+use std::{fmt::{Display, Formatter}, panic, ptr::{self, null_mut}};
 
 use malloc::MALLOC;
 
@@ -73,16 +73,36 @@ impl<T> FastVec<T> {
 
     // Student 2 should implement this.
     pub fn push(&mut self, t: T) {
+        unsafe{
         if self.len == self.capacity {
-            todo!("implement growing the vector by doubling the size!");
-        } else {
-            todo!("implement pushing t directly since the vector still has capacity!");
+            let bigger_capacity = self.capacity *2;
+            let new_ptr = MALLOC.malloc(std::mem::size_of::<T>() * bigger_capacity) as *mut T;
+            for i in 0..self.len{
+                let old_val = std::ptr::read(self.ptr_to_data.add(i));
+                std::ptr::write(new_ptr.add(i), old_val);
+            }
+            MALLOC.free(self.ptr_to_data as *mut u8);
+            self.ptr_to_data = new_ptr;
+            self.capacity = bigger_capacity;
         }
+        std::ptr::write(self.ptr_to_data.add(self.len), t);
+        self.len += 1;
     }
+}
 
     // Student 1 should implement this.
     pub fn remove(&mut self, i: usize) {
-        todo!("implement remove");
+        if i >= self.len {
+            panic!("FastVec: remove out of bounds");
+        }
+        unsafe {
+            let _removed = ptr::read(self.ptr_to_data.add(i));
+            for j in (i + 1)..self.len {
+                let val = ptr::read(self.ptr_to_data.add(j));
+                ptr::write(self.ptr_to_data.add(j - 1), val);
+            }
+        }
+        self.len = self.len - 1;
     }
 
     // This appears correct but with further testing, you will notice it has a bug!
@@ -90,7 +110,13 @@ impl<T> FastVec<T> {
     // Hint: check out case 2 in memory.rs, which you can run using
     //       cargo run --bin memory
     pub fn clear(&mut self) {
-        MALLOC.free(self.ptr_to_data as *mut u8);
+        unsafe{
+            for i in 0..self.len{
+                std::ptr::read(self.ptr_to_data.add(i));
+            }
+            MALLOC.free(self.ptr_to_data as *mut u8);
+        }
+        
         self.ptr_to_data = null_mut();
         self.len = 0;
         self.capacity = 0;
