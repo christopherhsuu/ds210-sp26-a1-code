@@ -54,17 +54,26 @@ impl ChatbotV5 {
 
         match cached_chat {
             None => {
-                println!("get_history: {username} is not in the cache!");
-                // TODO: The cache does not have the chat. What should you do?
-                // Your code goes here.
-                return Vec::new();
+                let mut chat = self.model
+                    .chat()
+                    .with_system_prompt("The assistant will act like a pirate");
+            if let Some(session) = file_library::load_chat_session_from_file(filename) {
+                chat = chat.with_session(session);
             }
+
+            let history = chat.session().unwrap().history()
+                .iter()
+                .map(|msg| msg.content().to_string()).collect();
+
+            self.cache.insert_chat(username, chat);
+            
+            history
+            },
+
             Some(chat_session) => {
                 println!("get_history: {username} is in the cache! Nice!");
-                // TODO: The cache has this chat. What should you do?
-                // Your code goes here.
-                return Vec::new();
-
+                let history = chat_session.session().unwrap().history();
+                history.iter().map(|msg| msg.content().to_string()).collect()
             }
         }
     }
