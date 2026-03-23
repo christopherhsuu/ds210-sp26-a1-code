@@ -47,6 +47,7 @@ impl ChatbotV3 {
             session
                 .history()
                 .into_iter()
+                .skip(1) 
                 .map(|msg| msg.content().to_string())
                 .collect()
         } else {

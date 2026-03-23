@@ -48,7 +48,12 @@ impl ChatbotV4 {
             },
             Some(session) => {
                 let history = session.history();
-                history.iter().map(|msg| msg.content().to_string()).collect()
+                session
+                .history()
+                .into_iter()
+                .skip(1)
+                .map(|msg| msg.content().to_string())
+                .collect()
             }
         }
     }
