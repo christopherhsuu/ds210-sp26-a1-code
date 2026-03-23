@@ -19,6 +19,7 @@ pub fn save_chat_session_to_file(filename: &str, session: &LlamaChatSession) {
 // Implement this
 pub fn load_chat_session_from_file(filename: &str) -> Option<LlamaChatSession> {
     // look at fs::read(...)
+    let load = fs::read(filename).ok()?;
     // also look at LlamaChatSession::from_bytes(...)
-    unimplemented!("Loading chat session from file {filename}");
+    LlamaChatSession::from_bytes(&bytes).ok()
 }
