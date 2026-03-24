@@ -17,32 +17,30 @@ impl ChatbotV5 {
     }
 
     pub async fn chat_with_user(&mut self, username: String, message: String) -> String {
-        let filename = &format!("{}.txt", username);
+        let filename = format!("{}.txt", username);
         let cached_chat = self.cache.get_chat(&username);
 
         match cached_chat {
             None => {
                 println!("chat_with_user: {username} is not in the cache!");
-                // The cache does not have the chat. What should you do?
-                let filename = format!("{}.txt", username);
-                let chat = if let Some(session) = file_library::load_chat_session_from_file(&filename) {
-                self.model.chat().with_session(session)
-                    } else {
-                    self.model
-                        .chat()
-                        .with_system_prompt("The assistant will act like a pirate")
-                    };
-                self.sessions.insert(username.clone(), chat);
-                let chat = self.sessions.get_mut(&username).unwrap();
-                let response = chat.add_message(message).await.unwrap();
-
-                response.to_string()
+                let mut chat = self.model
+                    .chat()
+                    .with_system_prompt("The assistant will act like a pirate");
+                if let Some(session) = file_library::load_chat_session_from_file(&filename) {
+                    chat = chat.with_session(session);
                 }
+                self.cache.insert_chat(username.clone(), chat);
+                let chat = self.cache.get_chat(&username).unwrap();
+                let response = chat(&message).await.unwrap();
+                let session = chat.session().unwrap();
+                file_library::save_chat_session_to_file(&filename, &session);
+                response.to_string()
             }
             Some(chat_session) => {
                 println!("chat_with_user: {username} is in the cache! Nice!");
-                // The cache has this chat. What should you do?
-                let response = chat.add_message(message).await.unwrap();
+                let response = chat_session(&message).await.unwrap();
+                let session = chat_session.session().unwrap();
+                file_library::save_chat_session_to_file(&filename, &session);
                 response.to_string()
             }
         }
@@ -50,30 +48,33 @@ impl ChatbotV5 {
 
     pub fn get_history(&mut self, username: String) -> Vec<String> {
         let filename = &format!("{}.txt", username);
-        let cached_chat = self.cache.get_chat(&username);
+        let cached_chat: Option<&mut Chat<Llama>> = self.cache.get_chat(&username);
 
         match cached_chat {
             None => {
-                let mut chat = self.model
+                let mut chat: Chat<Llama> = self.model
                     .chat()
                     .with_system_prompt("The assistant will act like a pirate");
-            if let Some(session) = file_library::load_chat_session_from_file(filename) {
-                chat = chat.with_session(session);
+                if let Some(session) = file_library::load_chat_session_from_file(filename) {
+                    chat = chat.with_session(session);
+                }
+
+                let history: Vec<String> = chat.session().unwrap().history()
+                    .iter()
+                    .skip(1)
+                    .map(|msg: &ChatMessage| msg.content().to_string())
+                    .collect();
+
+                self.cache.insert_chat(username, chat);
+                
+                history
             }
-
-            let history = chat.session().unwrap().history()
-                .iter()
-                .map(|msg| msg.content().to_string()).collect();
-
-            self.cache.insert_chat(username, chat);
-            
-            history
-            },
 
             Some(chat_session) => {
                 println!("get_history: {username} is in the cache! Nice!");
                 let history = chat_session.session().unwrap().history();
-                history.iter().map(|msg| msg.content().to_string()).collect()
+                history.iter().skip(1).map(|msg: &ChatMessage| msg.content().to_string()).collect()
             }
         }
     }
+}
