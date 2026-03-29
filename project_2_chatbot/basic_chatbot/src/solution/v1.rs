@@ -16,12 +16,16 @@ impl ChatbotV1 {
         let mut chat_session: Chat<Llama> = self.model
             .chat()
             .with_system_prompt("The assistant will act like a pirate");
-
+        
         // You need to add your code here
         // You must find a way to add the given message to the chat_session!
         // consider https://docs.rs/kalosm/0.4.0/kalosm/language/struct.Chat.html#method.add_message
         // Hint: make sure you transform/extract the response message as a **String**.
         let response = chat_session.add_message(message).await.unwrap();
+<<<<<<< s1basic
+        response.to_string()        
+=======
         response.to_string()
+>>>>>>> s2basic
     }
 }
