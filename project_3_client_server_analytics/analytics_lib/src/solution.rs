@@ -7,7 +7,19 @@ pub fn filter_dataset(dataset: &Dataset, filter: &Condition) -> Dataset {
 }
 
 pub fn group_by_dataset(dataset: Dataset, group_by_column: &String) -> HashMap<Value, Dataset> {
-    todo!("Implement this!");
+    let mut groups: HashMap<Value, Dataset> = HashMap::new();
+    let col_index = dataset.column_index(group_by_column);
+    let columns = dataset.columns().clone();
+
+    for row in dataset.into_iter() {
+        let key = row.get_value(col_index).clone();
+        groups
+            .entry(key)
+            .or_insert_with(|| Dataset::new(columns.clone()))
+            .add_row(row);
+    }
+
+    groups
 }
 
 pub fn aggregate_dataset(dataset: HashMap<Value, Dataset>, aggregation: &Aggregation) -> HashMap<Value, Value> {
