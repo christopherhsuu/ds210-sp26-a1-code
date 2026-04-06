@@ -7,7 +7,8 @@ pub fn hello() -> String {
 
 pub fn slow_rpc(input_dataset: &Dataset) -> Dataset {
     println!("slow_rpc called");
-    todo!("Implement this");
+    let dataset = input_dataset.clone();
+    return dataset
 }
 
 pub fn fast_rpc(input_dataset: &Dataset, query: Query) -> Dataset {
