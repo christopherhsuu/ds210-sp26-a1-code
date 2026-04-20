@@ -13,7 +13,6 @@ impl SolutionAgent {
             Player::O => Player::X,
         }
     }
-
     fn playable_cell_count(board: &Board) -> usize {
         let mut count = 0;
 
@@ -25,7 +24,6 @@ impl SolutionAgent {
                 }
             }
         }
-
         count
     }
 
@@ -60,7 +58,6 @@ impl SolutionAgent {
                 }
             }
         }
-
         for i in 0..n {
             for j in 0..n {
                 if j + 2 < n {
@@ -69,7 +66,6 @@ impl SolutionAgent {
                         root_player,
                     );
                 }
-
                 if i + 2 < n {
                     total += Self::score_window(
                         [&cells[i][j], &cells[i + 1][j], &cells[i + 2][j]],
