@@ -6,17 +6,14 @@ pub struct SolutionAgent {}
 
 impl SolutionAgent {
     const MAX_DEPTH: i32 = 4;
-
     fn opponent(player: Player) -> Player {
         match player {
             Player::X => Player::O,
             Player::O => Player::X,
         }
     }
-
     fn playable_cell_count(board: &Board) -> usize {
         let mut count = 0;
-
         for row in board.get_cells() {
             for cell in row {
                 match cell {
@@ -25,10 +22,8 @@ impl SolutionAgent {
                 }
             }
         }
-
         count
     }
-
     fn heuristic(board: &Board, root_player: Player) -> i32 {
         let cells = board.get_cells();
         let n = cells.len();
@@ -69,21 +64,18 @@ impl SolutionAgent {
                         root_player,
                     );
                 }
-
                 if i + 2 < n {
                     total += Self::score_window(
                         [&cells[i][j], &cells[i + 1][j], &cells[i + 2][j]],
                         root_player,
                     );
                 }
-
                 if i + 2 < n && j + 2 < n {
                     total += Self::score_window(
                         [&cells[i][j], &cells[i + 1][j + 1], &cells[i + 2][j + 2]],
                         root_player,
                     );
                 }
-
                 if i + 2 < n && j >= 2 {
                     total += Self::score_window(
                         [&cells[i][j], &cells[i + 1][j - 1], &cells[i + 2][j - 2]],
@@ -92,7 +84,6 @@ impl SolutionAgent {
                 }
             }
         }
-
         total
     }
 
@@ -122,7 +113,6 @@ impl SolutionAgent {
                 Cell::Wall => wall_count += 1,
             }
         }
-
         if wall_count > 0 || (root_count > 0 && opp_count > 0) {
             return 0;
         }
@@ -167,10 +157,8 @@ impl SolutionAgent {
                 return Some(0);
             }
         }
-
         None
     }
-
     fn minimax(
         board: &mut Board,
         current_player: Player,
@@ -214,7 +202,6 @@ impl SolutionAgent {
                     best_move = m;
                 }
             }
-
             (best_score, best_move.0, best_move.1)
         } else {
             let mut best_score = i32::MAX;
