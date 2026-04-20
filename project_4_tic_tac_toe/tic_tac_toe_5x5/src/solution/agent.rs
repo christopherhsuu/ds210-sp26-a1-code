@@ -95,13 +95,11 @@ impl SolutionAgent {
 
         total
     }
-
     fn score_window(window: [&Cell; 3], root_player: Player) -> i32 {
         let mut root_count = 0;
         let mut opp_count = 0;
         let mut empty_count = 0;
         let mut wall_count = 0;
-
         for cell in window {
             match cell {
                 Cell::X => {
